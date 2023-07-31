@@ -5,11 +5,17 @@ const User = require("../models/users");
 
 function createUser(req, res) {
   const { name, about, avatar } = req.body;
-  console.log("user created");
-  console.log(req);
+  //console.log("user created");
+  //console.log(req);
   User.create({ name: name, about: about, avatar: avatar })
     .then((user) => res.send(user))
-    .catch((err) => res.status(err.name).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(err.name).send({ message: err.message });
+      }
+    });
 }
 
 function getUsers(req, res) {
@@ -20,7 +26,12 @@ function getUsers(req, res) {
 
 function getUserByID(req, res) {
   User.findById(req.params.userId)
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "Пользователь не найден" });
+      }
+      res.send({ data: user });
+    })
     .catch((err) => res.status(err.name).send({ message: err.message }));
 }
 
