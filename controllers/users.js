@@ -8,12 +8,11 @@ function createUser(req, res) {
   //console.log("user created");
   //console.log(req);
   User.create({ name: name, about: about, avatar: avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(400).send({ message: err.message });
-      } else {
-        res.status(err.name).send({ message: err.message });
+        return;
       }
     });
 }
