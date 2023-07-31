@@ -11,14 +11,7 @@ const {
   updateAvatar,
 } = require("../controllers/users");
 
-router.post("/users", (req, res) => {
-  const { name, about, avatar } = req.body;
-  console.log("user created");
-  console.log(req);
-  User.create({ name: name, about: about, avatar: avatar })
-    .then((user) => res.send(user))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
-});
+router.post("/users", createUser);
 router.get("/users", getUsers);
 router.get("/users/:userId", getUserByID);
 
