@@ -2,7 +2,10 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
-const routeIndex = require("./routes/index"); // импортируем роутер
+//const usersRoute = require("./routes/users"); // импортируем роутер
+//const cardsRoute = require("./routes/cards"); // импортируем роутер
+const indexRoute = require("./routes/index"); // импортируем роутер
+
 const bodyParser = require("body-parser");
 
 const { PORT = 3000 } = process.env;
@@ -25,7 +28,7 @@ app.use((req, res, next) => {
 
   next();
 });
-app.use("/", routeIndex); // запускаем
+app.use("/", indexRoute); // запускаем
 
 app.listen(3000, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
