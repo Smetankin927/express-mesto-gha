@@ -30,7 +30,7 @@ function getUserByID(req, res) {
       if (!user) {
         return res.status(404).send({ message: "Пользователь не найден" });
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
