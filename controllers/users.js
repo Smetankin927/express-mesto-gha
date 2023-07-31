@@ -33,7 +33,7 @@ function getUserByID(req, res) {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError" || err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         return res.status(400).send({ message: err.message });
       }
       if (err.name === "DocumentNotFoundError") {
@@ -44,15 +44,35 @@ function getUserByID(req, res) {
 }
 
 function updateUser(req, res) {
-  User.findByIdAndUpdate(req.params._id, req.body, { new: true })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.name).send({ message: err.message }));
+  User.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 }
 
 function updateAvatar(req, res) {
-  User.findByIdAndUpdate(req.params._id, req.body, { new: true })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.name).send({ message: err.message }));
+  User.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+    runValidators: true,
+    upsert: false,
+  })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === "ValidationError" || err.name === "CastError") {
+        res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 }
 
 module.exports = {
