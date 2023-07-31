@@ -12,7 +12,8 @@ function createUser(req, res) {
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(400).send({ message: err.message });
-        return;
+      } else {
+        res.status(err.name).send({ message: err.message });
       }
     });
 }
@@ -31,7 +32,15 @@ function getUserByID(req, res) {
       }
       res.send({ data: user });
     })
-    .catch((err) => res.status(err.name).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === "CastError" || err.name === "ValidationError") {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 }
 
 function updateUser(req, res) {
