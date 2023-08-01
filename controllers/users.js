@@ -11,9 +11,9 @@ function createUser(req, res) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(err.name).send({ message: err.message });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
@@ -34,12 +34,14 @@ function getUserByID(req, res) {
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res
+          .status(400)
+          .send({ message: "Переданы некорректные данные" });
       }
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(404).send({ message: "Пользователь не найден" });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: "Произошла ошибка сервера" });
     });
 }
 
@@ -52,9 +54,9 @@ function updateUser(req, res) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: err.message });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
@@ -68,9 +70,9 @@ function updateAvatar(req, res) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: err.message });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }

@@ -11,9 +11,9 @@ function createCard(req, res) {
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
@@ -21,7 +21,9 @@ function createCard(req, res) {
 function getCards(req, res) {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch((err) =>
+      res.status(500).send({ message: "Произошла ошибка сервера" })
+    );
 }
 
 function deleteCardByID(req, res) {
@@ -35,9 +37,9 @@ function deleteCardByID(req, res) {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
@@ -56,9 +58,9 @@ function setLikeCard(req, res) {
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
@@ -77,9 +79,9 @@ function delLikeCard(req, res) {
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({ message: "Переданы некорректные данные" });
       } else {
-        res.status(500).send({ message: "Произошла ошибка" });
+        res.status(500).send({ message: "Произошла ошибка сервера" });
       }
     });
 }
