@@ -25,15 +25,16 @@ function getCards(req, res) {
 }
 
 function deleteCardByID(req, res) {
-  User.findByIdAndRemove(req.params.cardId)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Карточка не найден" });
+        res.status(404).send({ message: "Карточка не найден" });
+        return;
       }
-      res.status(200).send(card);
+      res.status(200).send({ data: card });
     })
     .catch((err) => {
-      if (err.name === "ValidationError" || err.name === "CastError") {
+      if (err.name === "CastError") {
         res.status(400).send({ message: err.message });
       } else {
         res.status(500).send({ message: "Произошла ошибка" });
