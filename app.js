@@ -47,11 +47,22 @@ app.post(
   }),
   createUser
 );
-app.post("/signin", login);
+app.post(
+  "/signin",
+  celebrate({
+    body: Joi.object()
+      .keys({
+        email: Joi.string().required().email(),
+        password: Joi.string().required(),
+      })
+      .unknown(true),
+  }),
+  login
+);
 // авторизация
-app.use(auth);
+//app.use(auth);
 //все остальные
-app.use("/", indexRoute); // запускаем
+app.use("/", auth, indexRoute); // запускаем
 
 //обработка ошибок
 app.use(errors()); // обработчик ошибок celebrate

@@ -28,11 +28,17 @@ function createUser(req, res, next) {
         password: hash,
       })
     )
-    .then((user) => res.status(200).send(user)) //fixme? if !user?????
+    .then((user) =>
+      res.status(200).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      })
+    ) //fixme? if !user?????
     .catch((err) => {
       if (err.name === "ValidationError") {
         //res.status(400).send({ message: "Переданы некорректные данные" });
-        console.log("создание пользователя некорректные данные");
         throw new ValidationError("Переданы некорректные данные");
       }
       if (err.code === 11000) {
@@ -42,8 +48,6 @@ function createUser(req, res, next) {
       }
     })
     .catch((err) => {
-      console.log("создание пользователя некорректные данные");
-      console.log(err.statusCode);
       next(err);
     });
 }
@@ -131,20 +135,25 @@ function updateAvatar(req, res) {
     .catch(next);
 }
 
-function login(req, res) {
+function login(req, res, next) {
+  console.log(req.body);
   if (!req.body) {
     //fixme здесь или в create?
     //res.status(400), json({ message: err.message });
-    throw new ValidationError("Переданы некорректные данные");
-  }
-
-  if (!email || !password) {
-    //fixme здесь или в create?
-    //res.status(400), json({ message: "нет пароля или почты" });
+    //console.log("here");
     throw new ValidationError("Переданы некорректные данные");
   }
 
   const { email, password } = req.body;
+
+  //console.log("here2");
+  if (!email || !password) {
+    //fixme здесь или в create?
+    //res.status(400), json({ message: "нет пароля или почты" });
+    //console.log("here2222");
+    throw new ValidationError("Переданы некорректные данные");
+  }
+  console.log("here-1");
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -154,13 +163,19 @@ function login(req, res) {
         expiresIn: "7d",
       }); // FIXME key
       // вернём токен
+      //console.log("here0");
       res.send({ token });
     })
     .catch((err) => {
       // ошибка аутентификации
-      res.status(401).send({ message: err.message });
+      //res.status(401).send({ message: err.message });
+      //console.log("here3");
+      throw new WrongLoginPassw("ошибка аутентификации");
     })
-    .catch(next); // FIXME вопросы
+    .catch((err) => {
+      //console.log("here4");
+      next(err);
+    }); // FIXME вопросы
 }
 
 module.exports = {
