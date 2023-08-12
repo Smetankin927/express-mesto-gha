@@ -1,18 +1,19 @@
 // routes/users.js
 // это файл маршрутов
 const router = require("express").Router();
-const User = require("../models/users");
 
 const {
-  createUser,
+  //createUser,
   getUsers,
   getUserByID,
+  getUserMe,
   updateUser,
   updateAvatar,
+  //login,
 } = require("../controllers/users");
 
-router.post("/users", createUser);
 router.get("/users", getUsers);
+router.get("/users/me", getUserMe); //FIXME
 router.get("/users/:userId", getUserByID);
 
 router.patch("/users/me", updateUser);
