@@ -2,6 +2,7 @@
 
 const express = require("express");
 const mongoose = require("mongoose");
+const { celebrate, Joi } = require("celebrate");
 //const usersRoute = require("./routes/users"); // импортируем роутер
 //const cardsRoute = require("./routes/cards"); // импортируем роутер
 const indexRoute = require("./routes/index"); // импортируем роутер
@@ -28,7 +29,19 @@ mongoose.connect("mongodb://localhost:27017/mestodb");
 
 // роуты, не требующие авторизации,
 // например, регистрация и логин
-app.post("/signup", createUser);
+app.post(
+  "/signup",
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string(),
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }),
+  }),
+  createUser
+);
 app.post("/signin", login);
 // авторизация
 app.use(auth);
@@ -37,12 +50,14 @@ app.use("/", indexRoute); // запускаем
 
 //обработка ошибок
 app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 500
+  //если у ошибки нет статуса, выставляем 500
+  console.log("Ощибка");
+  console.log(err.statusCode);
   const { statusCode = 500, message } = err;
 
   res.status(statusCode).send({
     // проверяем статус и выставляем сообщение в зависимости от него
-    message: statusCode === 500 ? "На сервере произошла ошибка" : message,
+    message: statusCode === 500 ? "На сервере22 произошла ошибка" : message,
   });
 });
 

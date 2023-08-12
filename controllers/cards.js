@@ -27,6 +27,10 @@ function getCards(req, res) {
 }
 
 function deleteCardByID(req, res) {
+  if (req.user._id !== req.owner) {
+    res.status(400).send({ message: "Переданы некорректные данные" }); //FIXME code
+    return;
+  }
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {

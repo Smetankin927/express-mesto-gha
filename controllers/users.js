@@ -14,7 +14,7 @@ const {
   RegistrationError, // 409
 } = require("../errors/errors");
 
-function createUser(req, res) {
+function createUser(req, res, next) {
   const { name, about, avatar, email, password } = req.body;
   //
   bcrypt
@@ -25,13 +25,14 @@ function createUser(req, res) {
         about: about,
         avatar: avatar,
         email: email,
-        password: hash, //FIXME HASH THE PASSWORD
+        password: hash,
       })
     )
     .then((user) => res.status(200).send(user)) //fixme? if !user?????
     .catch((err) => {
       if (err.name === "ValidationError") {
         //res.status(400).send({ message: "Переданы некорректные данные" });
+        console.log("создание пользователя некорректные данные");
         throw new ValidationError("Переданы некорректные данные");
       }
       if (err.code === 11000) {
@@ -40,7 +41,11 @@ function createUser(req, res) {
         );
       }
     })
-    .catch(next);
+    .catch((err) => {
+      console.log("создание пользователя некорректные данные");
+      console.log(err.statusCode);
+      next(err);
+    });
 }
 
 function getUsers(req, res) {
