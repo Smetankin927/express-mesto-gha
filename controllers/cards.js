@@ -15,12 +15,10 @@ const {
 function createCard(req, res, next) {
   const { name, link } = req.body;
   console.log("card created");
-  //console.log(req);
   Card.create({ name: name, link: link, owner: req.user._id })
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
     })
@@ -34,25 +32,21 @@ function getCards(req, res) {
 }
 
 function deleteCardByID(req, res, next) {
-  console.log(req.params.cardId);
   Card.findById(req.params.cardId).then((card) => {
-    if (req.user._id !== card.owner) {
-      //res.status(400).send({ message: "Переданы некорректные данные" }); //FIXME code
-      //return;
-      throw new ValidationError("Нет доступа");
+    console.log(card);
+    if (req.user._id != card.owner) {
+      throw new AccessError("Нет доступа");
     }
   });
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        //res.status(404).send({ message: "Карточка не найден" });
         throw new NotFoundError("Карточка не найден");
       }
       res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       next(err);
@@ -68,14 +62,12 @@ function setLikeCard(req, res, next) {
   )
     .then((card) => {
       if (!card) {
-        //return res.status(404).send({ message: "Карточка не найден" });
         throw new NotFoundError("Карточка не найден");
       }
       res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       next(err);
@@ -91,14 +83,12 @@ function delLikeCard(req, res, next) {
   )
     .then((card) => {
       if (!card) {
-        //return res.status(404).send({ message: "Карточка не найден" });
         throw new NotFoundError("Карточка не найден");
       }
       res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       next(err);

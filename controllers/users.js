@@ -69,7 +69,6 @@ function getUserByID(req, res, next) {
       return;
     })
     .catch((err) => {
-      console.log("getid 2");
       if (err.name === "ValidationError" || err.name === "CastError") {
         next(new ValidationError("Переданы некорректные данные"));
       }
@@ -78,7 +77,6 @@ function getUserByID(req, res, next) {
       }
       next(err);
     });
-  //.catch((err) => next(err));
 }
 
 function getUserMe(req, res) {
