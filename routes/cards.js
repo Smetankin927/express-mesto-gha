@@ -1,6 +1,7 @@
 // routes/cards.js
 // это файл маршрутов
 const router = require("express").Router();
+const { celebrate, Joi } = require("celebrate");
 
 const {
   createCard,
