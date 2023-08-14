@@ -38,7 +38,6 @@ function createUser(req, res, next) {
     ) //fixme? if !user?????
     .catch((err) => {
       if (err.name === "ValidationError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       if (err.code === 11000) {
@@ -62,18 +61,15 @@ function getUserByID(req, res) {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        //return res.status(404).send({ message: "Пользователь не найден" });
         throw new NotFoundError("Пользователь не найден");
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //return res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       if (err.name === "DocumentNotFoundError") {
-        //return res.status(404).send({ message: "Пользователь не найден" });
         throw new NotFoundError("Пользователь не найден");
       }
     })
@@ -81,26 +77,26 @@ function getUserByID(req, res) {
 }
 
 function getUserMe(req, res) {
+  console.log("we get me");
   //после авторизации у нас req.user есть
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        //return res.status(404).send({ message: "Пользователь не найден" });
         throw new NotFoundError("Пользователь не найден");
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //return res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
       if (err.name === "DocumentNotFoundError") {
-        //return res.status(404).send({ message: "Пользователь не найден" });
         throw new NotFoundError("Пользователь не найден");
       }
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 }
 
 function updateUser(req, res) {
@@ -112,7 +108,6 @@ function updateUser(req, res) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
         throw new ValidationError("Переданы некорректные данные");
       }
     })
@@ -138,22 +133,14 @@ function updateAvatar(req, res) {
 function login(req, res, next) {
   console.log(req.body);
   if (!req.body) {
-    //fixme здесь или в create?
-    //res.status(400), json({ message: err.message });
-    //console.log("here");
     throw new ValidationError("Переданы некорректные данные");
   }
 
   const { email, password } = req.body;
 
-  //console.log("here2");
   if (!email || !password) {
-    //fixme здесь или в create?
-    //res.status(400), json({ message: "нет пароля или почты" });
-    //console.log("here2222");
     throw new ValidationError("Переданы некорректные данные");
   }
-  console.log("here-1");
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -161,21 +148,19 @@ function login(req, res, next) {
       //создадим токен
       const token = jwt.sign({ _id: user._id }, "some-secret-key", {
         expiresIn: "7d",
-      }); // FIXME key
+      });
+      //записываем в куки
+      res.cookie("jwt", token);
       // вернём токен
-      //console.log("here0");
       res.send({ token });
     })
     .catch((err) => {
       // ошибка аутентификации
-      //res.status(401).send({ message: err.message });
-      //console.log("here3");
       throw new WrongLoginPassw("ошибка аутентификации");
     })
     .catch((err) => {
-      //console.log("here4");
       next(err);
-    }); // FIXME вопросы
+    });
 }
 
 module.exports = {

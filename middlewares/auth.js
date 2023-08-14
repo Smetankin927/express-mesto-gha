@@ -1,25 +1,21 @@
 // middlewares/auth.js
+const {
+  WrongLoginPassw, //401
+} = require("../errors/errors");
 
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    console.log("we auth1");
-    return res.status(401).send({ message: "Необходима авторизация" });
-  }
-
-  const token = authorization.replace("Bearer ", "");
+  const token = req.cookies.jwt;
   let payload;
-
   try {
-    payload = jwt.verify(token, "some-secret-key"); //fixme??
+    console.log("here1");
+    payload = jwt.verify(token, "some-secret-key");
   } catch (err) {
     console.log("we auth");
-    return res.status(401).send({ message: "Необходима авторизация" });
+    //return res.status(401).send({ message: "Необходима авторизация" });
+    next(new WrongLoginPassw("Необходима авторизация"));
   }
-
   req.user = payload; // записываем пейлоуд в объект запроса
 
   next(); // пропускаем запрос дальше

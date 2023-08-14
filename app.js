@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { celebrate, Joi } = require("celebrate");
 const { errors } = require("celebrate");
+const cookies = require("cookie-parser");
 //const usersRoute = require("./routes/users"); // импортируем роутер
 //const cardsRoute = require("./routes/cards"); // импортируем роутер
 const indexRoute = require("./routes/index"); // импортируем роутер
@@ -22,6 +23,7 @@ app.use(
     extended: true,
   })
 );
+app.use(cookies());
 app.use(bodyParser.json());
 
 // подключаемся к серверу mongo
@@ -69,7 +71,7 @@ app.use(errors()); // обработчик ошибок celebrate
 
 app.use((err, req, res, next) => {
   //если у ошибки нет статуса, выставляем 500
-  console.log("Ощибка");
+  console.log("Ошибка");
   console.log(err.statusCode);
   const { statusCode = 500, message } = err;
 
