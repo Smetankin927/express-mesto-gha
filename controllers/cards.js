@@ -33,7 +33,7 @@ function getCards(req, res) {
     .catch((err) => next(err));
 }
 
-function deleteCardByID(req, res) {
+function deleteCardByID(req, res, next) {
   if (req.user._id !== req.owner) {
     //res.status(400).send({ message: "Переданы некорректные данные" }); //FIXME code
     //return;
@@ -42,8 +42,8 @@ function deleteCardByID(req, res) {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: "Карточка не найден" });
-        return;
+        //res.status(404).send({ message: "Карточка не найден" });
+        throw new NotFoundError("Карточка не найден");
       }
       res.status(200).send({ data: card });
     })

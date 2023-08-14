@@ -117,7 +117,7 @@ function updateUser(req, res, next) {
     .catch(next);
 }
 
-function updateAvatar(req, res) {
+function updateAvatar(req, res, next) {
   User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,
