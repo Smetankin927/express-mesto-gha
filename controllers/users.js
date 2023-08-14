@@ -57,27 +57,31 @@ function getUsers(req, res) {
     .catch((err) => next(err));
 }
 
-function getUserByID(req, res) {
+function getUserByID(req, res, next) {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
+        console.log("getid 1");
         throw new NotFoundError("Пользователь не найден");
       }
+
       res.send(user);
+      return;
     })
     .catch((err) => {
+      console.log("getid 2");
       if (err.name === "ValidationError" || err.name === "CastError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
       }
       if (err.name === "DocumentNotFoundError") {
-        throw new NotFoundError("Пользователь не найден");
+        next(new NotFoundError("Пользователь не найден"));
       }
-    })
-    .catch(next);
+      next(err);
+    });
+  //.catch((err) => next(err));
 }
 
 function getUserMe(req, res) {
-  console.log("we get me");
   //после авторизации у нас req.user есть
   User.findById(req.user._id)
     .then((user) => {
@@ -87,14 +91,13 @@ function getUserMe(req, res) {
       res.send(user);
     })
     .catch((err) => {
+      console.log("getid 2");
       if (err.name === "ValidationError" || err.name === "CastError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
       }
       if (err.name === "DocumentNotFoundError") {
-        throw new NotFoundError("Пользователь не найден");
+        next(new NotFoundError("Пользователь не найден"));
       }
-    })
-    .catch((err) => {
       next(err);
     });
 }
@@ -131,7 +134,6 @@ function updateAvatar(req, res) {
 }
 
 function login(req, res, next) {
-  console.log(req.body);
   if (!req.body) {
     throw new ValidationError("Переданы некорректные данные");
   }

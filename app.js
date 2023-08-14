@@ -5,8 +5,6 @@ const mongoose = require("mongoose");
 const { celebrate, Joi } = require("celebrate");
 const { errors } = require("celebrate");
 const cookies = require("cookie-parser");
-//const usersRoute = require("./routes/users"); // импортируем роутер
-//const cardsRoute = require("./routes/cards"); // импортируем роутер
 const indexRoute = require("./routes/index"); // импортируем роутер
 
 const auth = require("./middlewares/auth");
@@ -62,9 +60,9 @@ app.post(
   login
 );
 // авторизация
-//app.use(auth);
+app.use(auth);
 //все остальные
-app.use("/", auth, indexRoute); // запускаем
+app.use("/", indexRoute); // запускаем
 
 //обработка ошибок
 app.use(errors()); // обработчик ошибок celebrate
