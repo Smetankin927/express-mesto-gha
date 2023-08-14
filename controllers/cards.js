@@ -34,12 +34,12 @@ function getCards(req, res) {
 function deleteCardByID(req, res, next) {
   Card.findById(req.params.cardId)
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError("Карточка не найден");
+      }
       if (req.user._id == card.owner) {
         Card.findByIdAndRemove(req.params.cardId)
           .then((card) => {
-            if (!card) {
-              throw new NotFoundError("Карточка не найден");
-            }
             res.status(200).send({ data: card });
           })
           .catch((err) => {
