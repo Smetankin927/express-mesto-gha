@@ -34,11 +34,14 @@ function getCards(req, res) {
 }
 
 function deleteCardByID(req, res, next) {
-  if (req.user._id !== req.owner) {
-    //res.status(400).send({ message: "Переданы некорректные данные" }); //FIXME code
-    //return;
-    throw new ValidationError("Переданы некорректные данные");
-  }
+  console.log(req.params.cardId);
+  Card.findById(req.params.cardId).then((card) => {
+    if (req.user._id !== card.owner) {
+      //res.status(400).send({ message: "Переданы некорректные данные" }); //FIXME code
+      //return;
+      throw new ValidationError("Нет доступа");
+    }
+  });
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
