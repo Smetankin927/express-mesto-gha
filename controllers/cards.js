@@ -57,7 +57,7 @@ function deleteCardByID(req, res) {
     .catch((err) => next(err));
 }
 
-function setLikeCard(req, res) {
+function setLikeCard(req, res, next) {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -80,7 +80,7 @@ function setLikeCard(req, res) {
     .catch((err) => next(err));
 }
 
-function delLikeCard(req, res) {
+function delLikeCard(req, res, next) {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
