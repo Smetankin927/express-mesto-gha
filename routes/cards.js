@@ -2,6 +2,7 @@
 // это файл маршрутов
 const router = require("express").Router();
 const { celebrate, Joi } = require("celebrate");
+Joi.objectId = require("joi-objectid")(Joi);
 
 const {
   createCard,
@@ -28,9 +29,25 @@ router.post(
   createCard
 );
 router.get("/cards", getCards);
-router.delete("/cards/:cardId", deleteCardByID);
+router.delete(
+  "/cards/:cardId",
+  celebrate({
+    params: Joi.object({
+      cardId: Joi.objectId(),
+    }).unknown(true),
+  }),
+  deleteCardByID
+);
 
 router.put("/cards/:cardId/likes", setLikeCard);
-router.delete("/cards/:cardId/likes", delLikeCard);
+router.delete(
+  "/cards/:cardId/likes",
+  celebrate({
+    params: Joi.object({
+      cardId: Joi.objectId(),
+    }).unknown(true),
+  }),
+  delLikeCard
+);
 
 module.exports = router; // экспортировали роутер
