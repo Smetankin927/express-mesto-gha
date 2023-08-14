@@ -18,16 +18,25 @@ router.get("/users/me", getUserMe); //FIXME
 router.get(
   "/users/:userId",
   celebrate({
-    body: Joi.object()
-      .keys({
-        id: Joi.objectId(),
-      })
-      .unknown(true),
+    params: Joi.object({
+      userId: Joi.objectId(),
+    }).unknown(true),
   }),
   getUserByID
 );
 
-router.patch("/users/me", updateUser);
+router.patch(
+  "/users/me",
+  celebrate({
+    body: Joi.object()
+      .keys({
+        name: Joi.string().required().min(2).max(30),
+        about: Joi.string().required().min(2).max(30),
+      })
+      .unknown(true),
+  }),
+  updateUser
+);
 router.patch("/users/me/avatar", updateAvatar);
 
 module.exports = router; // экспортировали роутер

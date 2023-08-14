@@ -102,7 +102,7 @@ function getUserMe(req, res) {
     });
 }
 
-function updateUser(req, res) {
+function updateUser(req, res, next) {
   User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,
