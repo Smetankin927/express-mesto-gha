@@ -32,12 +32,15 @@ function getCards(req, res) {
 }
 
 function deleteCardByID(req, res, next) {
-  Card.findById(req.params.cardId).then((card) => {
-    console.log(card);
-    if (req.user._id != card.owner) {
-      throw new AccessError("Нет доступа");
-    }
-  });
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      console.log(card.owner);
+      console.log(req.user._id);
+      if (req.user._id != card.owner) {
+        throw new AccessError("Нет доступа");
+      }
+    })
+    .catch((err) => next(err));
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {

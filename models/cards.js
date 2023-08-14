@@ -1,6 +1,6 @@
 // models/card.js
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // Опишем схему:
 const cardSchema = new mongoose.Schema({
   name: {
@@ -15,18 +15,20 @@ const cardSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    required: true
+    ref: "user",
+    required: true,
   },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    default: []
-  }],
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-  }
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      default: [],
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // создаём модель и экспортируем её
-module.exports = mongoose.model('card', cardSchema);
+module.exports = mongoose.model("card", cardSchema);
