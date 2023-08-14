@@ -37,6 +37,18 @@ router.patch(
   }),
   updateUser
 );
-router.patch("/users/me/avatar", updateAvatar);
+router.patch(
+  "/users/me/avatar",
+  celebrate({
+    body: Joi.object()
+      .keys({
+        avatar: Joi.string().pattern(
+          /https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}/
+        ),
+      })
+      .unknown(true),
+  }),
+  updateAvatar
+);
 
 module.exports = router; // экспортировали роутер
