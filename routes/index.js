@@ -15,7 +15,7 @@ const cardsRoute = require("./cards");
 router.use("/", usersRoute);
 router.use("/", cardsRoute);
 
-router.use("/*", (req, res) => {
+router.use("/*", (req, res, next) => {
   //res.status(404).send({ message: "Страница такой нету." });
   next(new NotFoundError("Страница такой нету."));
   return;

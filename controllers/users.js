@@ -13,6 +13,7 @@ const {
   AccessError, //403
   RegistrationError, // 409
 } = require("../errors/errors");
+const { errors } = require("celebrate");
 
 function createUser(req, res, next) {
   const { name, about, avatar, email, password } = req.body;
@@ -61,7 +62,6 @@ function getUserByID(req, res, next) {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        console.log("getid 1");
         throw new NotFoundError("Пользователь не найден");
       }
 
@@ -155,16 +155,15 @@ function login(req, res, next) {
         expiresIn: "7d",
       });
       //записываем в куки
-      res.cookie("jwt", token, { httpOnly: true, sameSite: true }).end();
+      res.cookie("jwt", token);
       // вернём токен
-      res.send({ message: "аутентификация успешна!" });
+      res.send({ token });
     })
     .catch((err) => {
-      if (err.statusCode === 401) {
-        // ошибка аутентификации
-        next(new WrongLoginPassw("ошибка аутентификации"));
-        return;
-      }
+      // ошибка аутентификации
+      throw new WrongLoginPassw("ошибка аутентификации");
+    })
+    .catch((err) => {
       next(err);
     });
 }
