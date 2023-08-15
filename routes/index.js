@@ -18,6 +18,7 @@ router.use("/", cardsRoute);
 router.use("/*", (req, res) => {
   //res.status(404).send({ message: "Страница такой нету." });
   next(new NotFoundError("Страница такой нету."));
+  return;
 });
 
 module.exports = router;

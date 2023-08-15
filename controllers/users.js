@@ -157,10 +157,10 @@ function login(req, res, next) {
       //записываем в куки
       res.cookie("jwt", token, { httpOnly: true, sameSite: true }).end();
       // вернём токен
-      //res.send({ token });
+      res.send({ message: "аутентификация успешна!" });
     })
     .catch((err) => {
-      if (err.status === 401) {
+      if (err.statusCode === 401) {
         // ошибка аутентификации
         next(new WrongLoginPassw("ошибка аутентификации"));
         return;
