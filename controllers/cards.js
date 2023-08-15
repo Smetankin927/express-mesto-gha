@@ -16,13 +16,14 @@ function createCard(req, res, next) {
   const { name, link } = req.body;
   console.log("card created");
   Card.create({ name: name, link: link, owner: req.user._id })
-    .then((cards) => res.send(cards))
+    .then((cards) => res.status(201).send(cards))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
-    })
-    .catch((err) => next(err));
+      next(err);
+    });
 }
 
 function getCards(req, res) {
@@ -44,11 +45,11 @@ function deleteCardByID(req, res, next) {
           })
           .catch((err) => {
             if (err.name === "CastError") {
-              throw new ValidationError("Переданы некорректные данные");
+              next(new ValidationError("Переданы некорректные данные"));
+              return;
             }
             next(err);
-          })
-          .catch((err) => next(err));
+          });
       } else {
         throw new AccessError("нет Доступа");
       }
@@ -70,11 +71,11 @@ function setLikeCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
       next(err);
-    })
-    .catch((err) => next(err));
+    });
 }
 
 function delLikeCard(req, res, next) {

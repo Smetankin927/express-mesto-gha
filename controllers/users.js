@@ -29,7 +29,7 @@ function createUser(req, res, next) {
       })
     )
     .then((user) =>
-      res.status(200).send({
+      res.status(201).send({
         name: user.name,
         about: user.about,
         avatar: user.avatar,
@@ -38,15 +38,15 @@ function createUser(req, res, next) {
     ) //fixme? if !user?????
     .catch((err) => {
       if (err.name === "ValidationError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
       if (err.code === 11000) {
-        throw new RegistrationError(
-          "Пользователь с такими данными уже существует"
+        next(
+          new RegistrationError("Пользователь с такими данными уже существует")
         );
+        return;
       }
-    })
-    .catch((err) => {
       next(err);
     });
 }
@@ -71,9 +71,11 @@ function getUserByID(req, res, next) {
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
         next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
       if (err.name === "DocumentNotFoundError") {
         next(new NotFoundError("Пользователь не найден"));
+        return;
       }
       next(err);
     });
@@ -92,9 +94,11 @@ function getUserMe(req, res) {
       console.log("getid 2");
       if (err.name === "ValidationError" || err.name === "CastError") {
         next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
       if (err.name === "DocumentNotFoundError") {
         next(new NotFoundError("Пользователь не найден"));
+        return;
       }
       next(err);
     });
@@ -109,10 +113,11 @@ function updateUser(req, res, next) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
-    })
-    .catch(next);
+      next(err);
+    });
 }
 
 function updateAvatar(req, res, next) {
@@ -124,11 +129,11 @@ function updateAvatar(req, res, next) {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError" || err.name === "CastError") {
-        //res.status(400).send({ message: "Переданы некорректные данные" });
-        throw new ValidationError("Переданы некорректные данные");
+        next(new ValidationError("Переданы некорректные данные"));
+        return;
       }
-    })
-    .catch(next);
+      next(err);
+    });
 }
 
 function login(req, res, next) {
@@ -150,15 +155,16 @@ function login(req, res, next) {
         expiresIn: "7d",
       });
       //записываем в куки
-      res.cookie("jwt", token);
+      res.cookie("jwt", token, { httpOnly: true, sameSite: true }).end();
       // вернём токен
-      res.send({ token });
+      //res.send({ token });
     })
     .catch((err) => {
-      // ошибка аутентификации
-      throw new WrongLoginPassw("ошибка аутентификации");
-    })
-    .catch((err) => {
+      if (err.status === 401) {
+        // ошибка аутентификации
+        next(new WrongLoginPassw("ошибка аутентификации"));
+        return;
+      }
       next(err);
     });
 }
